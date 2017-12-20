@@ -78,6 +78,5 @@ public class ArenaPanel
             y = yLimit;
 
         g.drawImage(offscreenImage, 0, 0, getWidth(), getHeight(), x, y, x + getWidth(), y + getHeight(), null);
-        g.drawImage(offscreenImage, 0, 0, null);
     }
 }
