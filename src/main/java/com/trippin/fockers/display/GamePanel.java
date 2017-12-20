@@ -4,7 +4,6 @@ import java.awt.BorderLayout;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 import com.trippin.fockers.engine.Engine;
 import com.trippin.fockers.model.Player;
@@ -28,11 +27,8 @@ public class GamePanel extends JPanel {
         add(controlsPanel, BorderLayout.SOUTH);
 
         // Add the main game panel
-        JScrollPane arenaView = new JScrollPane();
-        arena = new ArenaPanel(arenaView.getViewport(), engine, player);
-        arenaView.setViewportView(arena);
-        add(arenaView, BorderLayout.CENTER);
-
+        arena = new ArenaPanel(engine, player);
+        add(arena, BorderLayout.CENTER);
 
         // TODO - Should wait for panel to finish drawing. For now we'll just wait.
         synchronized (this) {

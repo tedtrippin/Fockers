@@ -14,6 +14,7 @@ public class Fockers extends JFrame {
         fockers.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         fockers.setSize(500, 500);
         fockers.setVisible(true);
+        fockers.setLocation(500, 300);
     }
 
     public Fockers() {

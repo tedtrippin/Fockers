@@ -1,63 +1,106 @@
 package com.trippin.fockers.engine;
 
+import java.awt.event.ActionEvent;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import javax.swing.AbstractAction;
+import javax.swing.JComponent;
+import javax.swing.KeyStroke;
+
 import com.trippin.fockers.model.Player;
 
-public class KeyboardListener implements KeyListener {
+public class KeyboardListener {
 
-    private final long INTERVAL = 100;
+    private final long INTERVAL = 50;
 
     private int KEY_LEFT = KeyEvent.VK_A;
     private int KEY_RIGHT = KeyEvent.VK_D;
     private int KEY_SHOOT1 = KeyEvent.VK_SPACE;
 
-    private Player player;
+    private final Player player;
+    private final JComponent component;
     private Timer turnLeftTimer;
     private Timer turnRightTimer;
 
-    public KeyboardListener(Player player) {
+    public KeyboardListener(JComponent component, Player player) {
+
+        this.component = component;
         this.player = player;
+
+        bindKeys();
     }
 
-    @Override
-    public void keyPressed(KeyEvent e) {
+    /**
+     * Binds key strokes to the player controls.
+     */
+    private void bindKeys() {
 
-        if (e.getKeyCode() == KEY_LEFT) {
-            if (turnLeftTimer != null)
-                turnLeftTimer.cancel();
+        // Note to self - KeyStroke.getKeyStroke('a') is same as "typed a" which is
+        // same as a keyPressed/keyReleased. This means you can't register a keyReleased
+        // action cus the released event is swallowed.
 
-            turnLeftTimer = new Timer();
-            turnLeftTimer.scheduleAtFixedRate(new TurnTask(-0.1), 0L, INTERVAL);
+        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_LEFT, 0), "ANTI-CLOCKWISE");
+        component.getActionMap().put("ANTI-CLOCKWISE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                antiClockwiseStart();
+            }
+        });
 
-        } else if (e.getKeyCode() == KEY_RIGHT) {
-            if (turnRightTimer != null)
-                turnRightTimer.cancel();
+        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_RIGHT, 0), "CLOCKWISE");
+        component.getActionMap().put("CLOCKWISE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clockwiseStart();
+            }
+        });
 
-            turnRightTimer = new Timer();
-            turnRightTimer.scheduleAtFixedRate(new TurnTask(0.1), 0L, INTERVAL);
-        }
+        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_LEFT, 0, true), "STOP-ANTI-CLOCKWISE");
+        component.getActionMap().put("STOP-ANTI-CLOCKWISE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                antiClockwiseStop();
+            }
+        });
+
+        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_RIGHT, 0, true), "STOP-CLOCKWISE");
+        component.getActionMap().put("STOP-CLOCKWISE", new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                clockwiseStop();
+            }
+        });
     }
 
-    @Override
-    public void keyReleased(KeyEvent e) {
 
-        if (e.getKeyCode() == KEY_LEFT) {
-            turnLeftTimer.cancel();
-            turnLeftTimer = null;
+    private void antiClockwiseStart() {
 
-        } else if (e.getKeyCode() == KEY_RIGHT) {
-            turnRightTimer.cancel();
-            turnRightTimer = null;
-        }
+        if (turnLeftTimer != null)
+            return;
+
+        turnLeftTimer = new Timer();
+        turnLeftTimer.scheduleAtFixedRate(new TurnTask(-0.1), 0L, INTERVAL);
     }
 
+    private void clockwiseStart() {
 
-    @Override
-    public void keyTyped(KeyEvent e) {
+        if (turnRightTimer != null)
+            return;
+
+        turnRightTimer = new Timer();
+        turnRightTimer.scheduleAtFixedRate(new TurnTask(0.1), 0L, INTERVAL);
+    }
+
+    private void antiClockwiseStop() {
+        turnLeftTimer.cancel();
+        turnLeftTimer = null;
+    }
+
+    private void clockwiseStop() {
+        turnRightTimer.cancel();
+        turnRightTimer = null;
     }
 
     class TurnTask extends TimerTask {
