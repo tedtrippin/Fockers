@@ -9,6 +9,8 @@ import com.trippin.fockers.model.Player;
 
 public class Engine {
 
+    private static int GROUND_LEVEL = 50;
+
     private boolean running = true;;
     private long speed = 100; // The delay between game clicks (smaller means faster)
     private final List<Player> players;
@@ -25,8 +27,11 @@ public class Engine {
     }
 
     public void click() {
-
         players.forEach(t -> t.click(this));
+    }
+
+    public int getGroundLevel() {
+        return arenaHeight - GROUND_LEVEL;
     }
 
     public Dimension getSize() {

@@ -34,7 +34,7 @@ public class ArenaPanel
         this.player = player;
 
         setPreferredSize(engine.getSize());
-        keyboardListener = new KeyboardListener(this, player);
+        keyboardListener = new KeyboardListener(this, player, engine);
         setFocusable(true);
 
         URL backgroundUrl = ArenaMask.class.getClassLoader().getResource("background.jpg");

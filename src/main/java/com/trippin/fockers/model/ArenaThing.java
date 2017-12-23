@@ -58,14 +58,14 @@ public interface ArenaThing {
      *
      * @return
      */
-    public int getSpeed();
+    public double getSpeed();
 
     /**
      * Sets the speed.
      *
      * @param speed
      */
-    public void setSpeed(int speed);
+    public void setSpeed(double speed);
 
     /**
      * Gets the, per click, x position adjustment.
@@ -80,6 +80,20 @@ public interface ArenaThing {
      * @return
      */
     public double getYSpeed();
+
+    /**
+     * Increases throttle. Returns the throttle value.
+     *
+     * @return
+     */
+    public int accelerate();
+
+    /**
+     * Decreases throttle. Returns the throttle value.
+     *
+     * @return
+     */
+    public int decelerate();
 
     /**
      * Called by engine each click.

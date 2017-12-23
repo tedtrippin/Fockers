@@ -52,7 +52,7 @@ public class MainMenu
         Player p1 = null;
         try {
             BufferedImage bi = ImageIO.read(planeUrl);
-            p1 = new Player(100, 300, 4, 0, bi);
+            p1 = new Player(100, 950, 0, 0, bi);
             players.add(p1);
         } catch (IOException ex) {
             ex.printStackTrace(System.err);

@@ -22,8 +22,8 @@ public abstract class AbstractArenaThing implements ArenaThing {
     protected int direction;
     protected double xSpeed;
     protected double ySpeed;
-
-    private int speed;
+    protected int throttle;
+    protected double speed;
 
     public AbstractArenaThing(int x, int y, int speed, int direction) {
         posX = x;
@@ -71,12 +71,12 @@ public abstract class AbstractArenaThing implements ArenaThing {
     }
 
     @Override
-    public int getSpeed() {
+    public double getSpeed() {
         return speed;
     }
 
     @Override
-    public void setSpeed(int speed) {
+    public void setSpeed(double speed) {
         this.speed = speed;
         updated();
     }
@@ -89,6 +89,24 @@ public abstract class AbstractArenaThing implements ArenaThing {
     @Override
     public double getYSpeed() {
         return ySpeed;
+    }
+
+    @Override
+    public int accelerate() {
+
+        if (throttle < 100)
+            throttle++;
+
+        return throttle;
+    }
+
+    @Override
+    public int decelerate() {
+
+        if (throttle > 0)
+            throttle--;
+
+        return throttle;
     }
 
     private void updated() {

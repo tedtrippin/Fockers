@@ -17,17 +17,21 @@ public class KeyboardListener {
 
     private int KEY_LEFT = KeyEvent.VK_A;
     private int KEY_RIGHT = KeyEvent.VK_D;
+    private int KEY_UP = KeyEvent.VK_W;
+    private int KEY_DOWN = KeyEvent.VK_S;
     private int KEY_SHOOT1 = KeyEvent.VK_SPACE;
 
     private final Player player;
     private final JComponent component;
-    private Timer turnLeftTimer;
-    private Timer turnRightTimer;
+    private final Engine engine;
+    private Timer turnTimer;
+    private Timer throttleTimer;
 
-    public KeyboardListener(JComponent component, Player player) {
+    public KeyboardListener(JComponent component, Player player, Engine engine) {
 
         this.component = component;
         this.player = player;
+        this.engine = engine;
 
         bindKeys();
     }
@@ -41,66 +45,62 @@ public class KeyboardListener {
         // same as a keyPressed/keyReleased. This means you can't register a keyReleased
         // action cus the released event is swallowed.
 
-        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_LEFT, 0), "ANTI-CLOCKWISE");
-        component.getActionMap().put("ANTI-CLOCKWISE", new AbstractAction() {
+        addCommand(KEY_LEFT, () -> startTurning(-2), () -> stopTurning());
+        addCommand(KEY_RIGHT, () -> startTurning(2), () -> stopTurning());
+        addCommand(KEY_UP, () -> startThrottle(true), () -> stopThrottle());
+        addCommand(KEY_DOWN, () -> startThrottle(false), () -> stopThrottle());
+    }
+
+    private void addCommand(int key, DoAction onPress, DoAction onRelease) {
+
+        component.getInputMap().put(KeyStroke.getKeyStroke(key, 0), "PRESS_" + key);
+        component.getActionMap().put("PRESS_" + key, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                antiClockwiseStart();
+                onPress.doSomething();
             }
         });
-
-        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_RIGHT, 0), "CLOCKWISE");
-        component.getActionMap().put("CLOCKWISE", new AbstractAction() {
+        component.getInputMap().put(KeyStroke.getKeyStroke(key, 0, true), "RELEASE_" + key);
+        component.getActionMap().put("RELEASE_" + key, new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                clockwiseStart();
-            }
-        });
-
-        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_LEFT, 0, true), "STOP-ANTI-CLOCKWISE");
-        component.getActionMap().put("STOP-ANTI-CLOCKWISE", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                antiClockwiseStop();
-            }
-        });
-
-        component.getInputMap().put(KeyStroke.getKeyStroke(KEY_RIGHT, 0, true), "STOP-CLOCKWISE");
-        component.getActionMap().put("STOP-CLOCKWISE", new AbstractAction() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                clockwiseStop();
+                onRelease.doSomething();
             }
         });
     }
 
+    private void startTurning(int direction) {
 
-    private void antiClockwiseStart() {
-
-        if (turnLeftTimer != null)
+        if (turnTimer != null)
             return;
 
-        turnLeftTimer = new Timer();
-        turnLeftTimer.scheduleAtFixedRate(new TurnTask(-1), 0L, INTERVAL);
-    }
-
-    private void clockwiseStart() {
-
-        if (turnRightTimer != null)
+        if (player.getSpeed() < 2 && player.getPosY() >= engine.getGroundLevel())
             return;
 
-        turnRightTimer = new Timer();
-        turnRightTimer.scheduleAtFixedRate(new TurnTask(1), 0L, INTERVAL);
+        turnTimer = new Timer();
+        turnTimer.scheduleAtFixedRate(new TurnTask(direction), 0L, INTERVAL);
     }
 
-    private void antiClockwiseStop() {
-        turnLeftTimer.cancel();
-        turnLeftTimer = null;
+    private void stopTurning() {
+
+        if (turnTimer != null)
+            turnTimer.cancel();
+
+        turnTimer = null;
     }
 
-    private void clockwiseStop() {
-        turnRightTimer.cancel();
-        turnRightTimer = null;
+    private void startThrottle(boolean accelerate) {
+
+        if (throttleTimer != null)
+            return;
+
+        throttleTimer = new Timer();
+        throttleTimer.scheduleAtFixedRate(new ThrottleTask(accelerate), 0L, INTERVAL);
+    }
+
+    private void stopThrottle() {
+        throttleTimer.cancel();
+        throttleTimer = null;
     }
 
     class TurnTask extends TimerTask {
@@ -115,5 +115,27 @@ public class KeyboardListener {
         public void run() {
             player.setDirection(player.getDirection() + step);
         }
+    }
+
+    class ThrottleTask extends TimerTask {
+
+        private boolean accelerate;
+
+        public ThrottleTask(boolean accelerate) {
+            this.accelerate = accelerate;
+        }
+
+        @Override
+        public void run() {
+
+            if (accelerate)
+                player.accelerate();
+            else
+                player.decelerate();
+        }
+    }
+
+    static interface DoAction {
+        void doSomething();
     }
 }
