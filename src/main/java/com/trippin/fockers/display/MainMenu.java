@@ -62,7 +62,7 @@ public class MainMenu
         // TODO
         ArenaMask testArenaMask = new ArenaMask(2000, 1000);
 
-        Engine engine = new Engine(testArenaMask, 40, players);
+        Engine engine = new Engine(testArenaMask, 30, players);
 
         // Create the game panel
         GamePanel gamePanel = new GamePanel(parent, engine, p1);

@@ -3,15 +3,29 @@ package com.trippin.fockers.model;
 
 public abstract class AbstractArenaThing implements ArenaThing {
 
+    private static double[] sinTable = new double[360];
+    private static double[] cosTable = new double[360];
+    static double[] radiansTable = new double[360];
+
+    static {
+        double oneDegreeInRadians = Math.PI / 180;
+        for (int i = 0; i < 360; i++) {
+            double radians = i * oneDegreeInRadians;
+            sinTable[i] = Math.sin(radians);
+            cosTable[i] = Math.cos(radians);
+            radiansTable[i] = radians;
+        }
+    }
+
     protected double posX; // Bottom of thing
     protected double posY; // Middle of thing
-    protected double direction;
+    protected int direction;
     protected double xSpeed;
     protected double ySpeed;
 
     private int speed;
 
-    public AbstractArenaThing(int x, int y, int speed, double direction) {
+    public AbstractArenaThing(int x, int y, int speed, int direction) {
         posX = x;
         posY = y;
         this.speed = speed;
@@ -40,12 +54,18 @@ public abstract class AbstractArenaThing implements ArenaThing {
     }
 
     @Override
-    public double getDirection() {
+    public int getDirection() {
         return direction;
     }
 
     @Override
-    public void setDirection(double direction) {
+    public void setDirection(int direction) {
+
+        if (direction < 0)
+            direction += 360;
+        else if (direction > 359)
+            direction -= 360;
+
         this.direction = direction;
         updated();
     }
@@ -72,7 +92,7 @@ public abstract class AbstractArenaThing implements ArenaThing {
     }
 
     private void updated() {
-        xSpeed = Math.cos(direction) * speed;
-        ySpeed = Math.sin(direction) * speed;
+        xSpeed = cosTable[direction] * speed;
+        ySpeed = sinTable[direction] * speed;
     }
 }

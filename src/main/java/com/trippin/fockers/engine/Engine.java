@@ -9,12 +9,8 @@ import com.trippin.fockers.model.Player;
 
 public class Engine {
 
-    private final int GRAVITY = 5;
-    private final int EMPTY_PIXEL = -16777216;
-    private final int GRAVITY_PLUS_1 = GRAVITY + 1; // For convenience
-
     private boolean running = true;;
-    private long speed = 100;
+    private long speed = 100; // The delay between game clicks (smaller means faster)
     private final List<Player> players;
     private ArenaMask mask;
     private int arenaWidth;

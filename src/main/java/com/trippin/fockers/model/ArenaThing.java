@@ -39,18 +39,18 @@ public interface ArenaThing {
     public void setPosY(double y);
 
     /**
-     * Gets the direction facing.
+     * Gets the direction facing, in degrees. 0 is up.
      *
      * @return
      */
-    public double getDirection();
+    public int getDirection();
 
     /**
-     * Sets the facing direction.
+     * Sets the facing direction. 0 is up.
      *
      * @param direction
      */
-    public void setDirection(double direction);
+    public void setDirection(int direction);
 
     /**
      * Gets the speed of the thing. Same value

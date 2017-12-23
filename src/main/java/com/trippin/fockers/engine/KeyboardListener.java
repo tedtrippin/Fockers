@@ -13,7 +13,7 @@ import com.trippin.fockers.model.Player;
 
 public class KeyboardListener {
 
-    private final long INTERVAL = 50;
+    private final long INTERVAL = 20;
 
     private int KEY_LEFT = KeyEvent.VK_A;
     private int KEY_RIGHT = KeyEvent.VK_D;
@@ -81,7 +81,7 @@ public class KeyboardListener {
             return;
 
         turnLeftTimer = new Timer();
-        turnLeftTimer.scheduleAtFixedRate(new TurnTask(-0.1), 0L, INTERVAL);
+        turnLeftTimer.scheduleAtFixedRate(new TurnTask(-1), 0L, INTERVAL);
     }
 
     private void clockwiseStart() {
@@ -90,7 +90,7 @@ public class KeyboardListener {
             return;
 
         turnRightTimer = new Timer();
-        turnRightTimer.scheduleAtFixedRate(new TurnTask(0.1), 0L, INTERVAL);
+        turnRightTimer.scheduleAtFixedRate(new TurnTask(1), 0L, INTERVAL);
     }
 
     private void antiClockwiseStop() {
@@ -105,9 +105,9 @@ public class KeyboardListener {
 
     class TurnTask extends TimerTask {
 
-        private double step;
+        private int step;
 
-        public TurnTask(double step) {
+        public TurnTask(int step) {
             this.step = step;
         }
 
