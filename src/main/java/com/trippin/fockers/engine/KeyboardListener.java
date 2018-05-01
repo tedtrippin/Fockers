@@ -74,6 +74,7 @@ public class KeyboardListener {
         if (turnTimer != null)
             return;
 
+        // Can't turn till got up speed and rising
         if (player.getSpeed() < 2 && player.getPosY() >= engine.getGroundLevel())
             return;
 
